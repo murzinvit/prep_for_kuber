@@ -1,0 +1,44 @@
+---
+- name: Prepare Centos for kuber
+  hosts: all
+  become: true
+  tasks:
+    - name: Bootstrap a host without python2 installed
+      raw: yum install -y python3
+    - name: Update repositories cache
+      yum:
+        update_cache: yes
+    - name: Disable SWAP
+      shell:
+        cmd: |
+          swapoff -a
+      args:
+        executable: /bin/bash
+    - name: Remove Swap from fstab
+      mount:
+        name: swap
+        fstype: swap
+        state: absent
+    - name: Install git
+      yum:
+        name: git
+        state: present
+    - name: Clone kubespray repo
+      git:
+        repo: "https://github.com/kubernetes-sigs/kubespray"
+        dest: /tmp/kubespray
+    - name: Install requests==2.23.0
+      shell:
+        cmd: |
+          pip3 install --ignore-installed requests==2.23.0
+      args:
+        executable: /bin/bash
+    - name: Install requirements
+      shell:
+        cmd: |
+          pip3 install -r /tmp/kubespray/requirements.txt
+      args:
+        executable: /bin/bash
+    - name: Print all available facts
+      debug:
+        var: ansible_facts.hostname
