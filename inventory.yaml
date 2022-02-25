@@ -1,0 +1,12 @@
+---
+all:
+  hosts:
+    62.84.122.95:
+      ansible_connection: ssh
+      ansible_user: admin
+    51.250.29.164:
+      ansible_connection: ssh
+      ansible_user: admin
+    51.250.28.162:
+      ansible_connection: ssh
+      ansible_user: admin
