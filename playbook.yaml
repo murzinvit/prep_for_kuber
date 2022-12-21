@@ -44,3 +44,25 @@
     - name: Print all available facts
       debug:
         var: ansible_facts.hostname
+    - name: add repo
+      template:
+        src: kubernetes.repo.j2
+        dest: /etc/yum.repos.d/kubernetes.repo
+    - name: add hosts
+      template:
+        src: hosts.j2
+        dest: /etc/hosts
+    - name: install kubelet
+      yum:
+        name: kubelet
+        state: present
+    - name: install kubectl
+      yum:
+        name: kubectl
+        state: present
+      when: ansible_facts['nodename'] == 'k8s-master'
+    - name: install kubeadm
+      yum:
+        name: kubeadm
+        state: present
+      when: ansible_facts['nodename'] == 'k8s-master'
